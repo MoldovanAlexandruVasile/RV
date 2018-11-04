@@ -3,8 +3,6 @@
 using namespace rt;
 
 Intersection Sphere::getIntersection(const Line &line, float minDist, float maxDist) {
-	Intersection in;
-
 	/*
 	* S <=> (Xs - Xc)^2 + (Ys - Yc)^2 + (Zs - Zc)^2 = R^2
 	* We can substitute Xs, Ys, Zs as such:
@@ -25,6 +23,7 @@ Intersection Sphere::getIntersection(const Line &line, float minDist, float maxD
 	* delta > 0 <=> overlap, two solutions (-b+/-sqrt(delta)/2a), choose the smaller one (closest intersection point)
 	*/
 
+	Intersection in;
 	double A = (line.dx().x() * line.dx().x()) +
 		(line.dx().y() * line.dx().y()) +
 		(line.dx().z() * line.dx().z());
@@ -42,21 +41,26 @@ Intersection Sphere::getIntersection(const Line &line, float minDist, float maxD
 	double t0, t1, t;
 
 	if (delta < 0)
-		return in;
-
-	if (delta == 0)
+		in = Intersection(false, this, &line, 0);
+	else if (delta == 0) {
 		t = (-1 * B) / (2 * A);
+		if (t >= minDist && t <= maxDist)
+			in = Intersection(true, this, &line, t);
+		else in = Intersection(false, this, &line, 0);
+	}
 	else {
 		t0 = (-1 * B + sqrt(delta)) / (2 * A);
 		t1 = (-1 * B - sqrt(delta)) / (2 * A);
-		if (t0 < t1)
-			t = t0;
-		else
-			t = t1;
-	}
-
-	if (t >= minDist && t <= maxDist) {
-		in = Intersection(true, this, &line, t);
+		if (t0 < t1) {
+			if (t0 >= minDist && t0 <= maxDist)
+				in = Intersection(true, this, &line, t0);
+			else in = Intersection(false, this, &line, 0);
+		}
+		else {
+			if (t1 >= minDist && t1 <= maxDist)
+				in = Intersection(true, this, &line, t1);
+			else in = Intersection(false, this, &line, 0);
+		}
 	}
 
 	return in;

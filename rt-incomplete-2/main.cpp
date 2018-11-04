@@ -68,8 +68,8 @@ int main() {
 		for (int j = 0; j < imageHeight; j++) {
 			float iView = imageToViewPlane(i, imageWidth, viewPlaneWidth);
 			float jView = imageToViewPlane(j, imageHeight, viewPlaneHeight);
-			Vector auxVector = Vector(iView, jView, viewPlaneDist);
-			Line line = Line(viewPoint, auxVector, false);
+			Vector pixelPos = viewPoint + viewDirection * viewPlaneDist + viewUp * jView + viewParallel * iView;
+			Line line = Line(viewPoint, pixelPos, false);
 			Intersection intersection = findFirstIntersection(line, frontPlaneDist, backPlaneDist);
 			if (intersection.valid()) {
 				Color color = Color(0, 0, 0);
