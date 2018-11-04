@@ -66,7 +66,9 @@ int main() {
 
 	for (int i = 0; i < imageWidth; i++) {
 		for (int j = 0; j < imageHeight; j++) {
-			Vector auxVector = Vector((imageWidth / 2) - i, (imageHeight / 2) - j, viewPlaneDist);
+			float iView = imageToViewPlane(i, imageWidth, viewPlaneWidth);
+			float jView = imageToViewPlane(j, imageHeight, viewPlaneHeight);
+			Vector auxVector = Vector(iView, jView, viewPlaneDist);
 			Line line = Line(viewPoint, auxVector, false);
 			Intersection intersection = findFirstIntersection(line, frontPlaneDist, backPlaneDist);
 			if (intersection.valid()) {
@@ -93,6 +95,7 @@ int main() {
 				color = color / lightCount;
 				image.setPixel(i, j, color);
 			}
+			else image.setPixel(i, j, Color(0,0,0));
 		}
 	}
 
